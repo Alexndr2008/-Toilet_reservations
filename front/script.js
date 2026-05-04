@@ -1,4 +1,4 @@
-const API_URL = 'http://127.0.0'; // Укажи свой URL Django
+const API_URL = 'http://127.0.0.0:8000'; // Укажи свой URL Django
 let toiletsData = [];
 
 // 1. Инициализация при загрузке
