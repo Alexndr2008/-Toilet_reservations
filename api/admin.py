@@ -1,3 +1,5 @@
 from django.contrib import admin
+from .models import User, Toilet_room, Toilet
 
-# Register your models here.
+
+admin.site.register([User, Toilet, Toilet_room])

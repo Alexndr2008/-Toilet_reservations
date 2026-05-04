@@ -27,8 +27,14 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+AUTH_USER_MODEL = 'api.User'
 
-# Application definition
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'api.auth.BearerToken'
+    ]
+}
 
 INSTALLED_APPS = [
     'django.contrib.admin',
