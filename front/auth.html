@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход / Регистрация - WCReserved</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .auth-container { max-width: 400px; margin: 80px auto; padding: 30px; border: 1px solid #ddd; border-radius: 12px; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .input-field { width: 100%; padding: 12px; margin: 10px 0 20px 0; border: 1px solid #eee; border-radius: 8px; background: #f9f9f9; display: block; box-sizing: border-box; }
+        .tab-btn { cursor: pointer; padding: 10px; flex: 1; text-align: center; border-bottom: 2px solid transparent; transition: 0.3s; }
+        .active-tab { border-bottom: 2px solid #6366f1; color: #6366f1; font-weight: bold; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <div class="auth-container">
+        <div class="flex mb-6">
+            <div id="tab-login" class="tab-btn active-tab" onclick="switchTab('login')">Вход</div>
+            <div id="tab-register" class="tab-btn" onclick="switchTab('register')">Регистрация</div>
+        </div>
+
+        <h2 id="form-title" class="text-xl font-bold mb-6 text-center text-gray-700">Войти в аккаунт</h2>
+
+        <form id="auth-form">
+            <label class="text-sm font-medium text-gray-600">Логин</label>
+            <input type="text" id="username" required class="input-field" placeholder="Ваш никнейм">
+
+            <label class="text-sm font-medium text-gray-600">Пароль</label>
+            <input type="password" id="password" required class="input-field" placeholder="••••••••">
+
+            <button type="submit" id="submit-btn" class="btn-primary w-full py-3" style="width: 100%; cursor: pointer;">Войти</button>
+        </form>
+
+        <p id="message" class="text-sm mt-4 text-center hidden"></p>
+
+        <div class="mt-8 text-center border-t pt-4">
+            <a href="index.html" class="text-gray-400 hover:text-indigo-600 text-sm">← На главную</a>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://127.0.0.1:8000';
+        let currentMode = 'login';
+
+        function switchTab(mode) {
+            currentMode = mode;
+            document.getElementById('tab-login').classList.toggle('active-tab', mode === 'login');
+            document.getElementById('tab-register').classList.toggle('active-tab', mode === 'register');
+            document.getElementById('form-title').innerText = mode === 'login' ? 'Войти в аккаунт' : 'Создать аккаунт';
+            document.getElementById('submit-btn').innerText = mode === 'login' ? 'Войти' : 'Зарегистрироваться';
+            document.getElementById('message').classList.add('hidden');
+        }
+
+        document.getElementById('auth-form').onsubmit = async (e) => {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const endpoint = currentMode === 'login' ? '/auth/login/' : '/auth/register/';
+
+            try {
+                const response = await fetch(`${API_URL}${endpoint}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                // Если сервер вернул HTML вместо JSON (например, 404), выкидываем ошибку
+                if (response.headers.get("content-type")?.includes("text/html")) {
+                    throw new Error("Сервер вернул HTML (ошибка пути). Проверьте слэши в URL.");
+                }
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    if (currentMode === 'login') {
+                        // ИСПРАВЛЕНО: берем accessToken, как присылает твой сервер
+                        const token = data.accessToken || data.token || data.access;
+                        if (token) {
+                            localStorage.setItem('token', token);
+                            window.location.href = 'index.html';
+                        } else {
+                            showError("Ошибка: сервер не прислал accessToken");
+                        }
+                    } else {
+                        alert("Регистрация успешна! Теперь войдите.");
+                        switchTab('login');
+                    }
+                } else {
+                    showError(data.detail || data.error || "Ошибка авторизации");
+                }
+            } catch (err) {
+                showError("Ошибка: " + err.message);
+            }
+        };
+
+        function showError(text) {
+            const msg = document.getElementById('message');
+            msg.innerText = text;
+            msg.style.color = 'red';
+            msg.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
