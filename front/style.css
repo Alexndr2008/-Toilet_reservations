@@ -80,7 +80,7 @@ body {
 .btn-primary:hover { opacity: 0.9; }
 .btn-primary:disabled { background: #d1d5db; cursor: not-allowed; }
 
-/* Модалка */
+
 .modal {
     position: fixed;
     inset: 0;

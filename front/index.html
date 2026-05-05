@@ -5,12 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WC Booking System</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Подключаем Tailwind для быстрой верстки отступов, но основной дизайн в style.css -->
-    <script src="https://tailwindcss.com" defer></script>
+    <script src="./script.js" defer></script>
 </head>
 <body>
 
-    <!-- Навигация -->
     <nav class="navbar">
         <div class="container mx-auto flex justify-between items-center px-4">
             <h1 class="logo">WC<span>Reserved</span></h1>
@@ -26,7 +24,6 @@
 
     <main class="container mx-auto px-4 py-8">
 
-        <!-- Панель фильтров -->
         <section class="filters-panel">
             <div class="filter-group">
                 <label>Класс комфорта</label>
@@ -45,14 +42,11 @@
             <button onclick="applyFilters()" class="btn-primary">Применить</button>
         </section>
 
-        <!-- Сетка карточек -->
         <div id="toilet-list" class="grid-container">
-            <!-- Сюда JS отрисует данные -->
             <div class="loader">Загрузка данных...</div>
         </div>
     </main>
 
-    <!-- Модальное окно бронирования -->
     <div id="booking-modal" class="modal hidden">
         <div class="modal-content">
             <h3 class="text-xl font-bold mb-4">Бронирование комнаты</h3>
